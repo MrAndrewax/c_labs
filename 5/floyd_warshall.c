@@ -5,8 +5,6 @@
 #include "floyd_warshall.h"
 
 
-
-
 w_Matrix *create_w_Matrix(Graph *graph) {
     w_Matrix* wMatrix = malloc(sizeof(w_Matrix));
     wMatrix->size = graph->v;
@@ -117,8 +115,6 @@ void free_piMatrix(pi_Matrix* piMatrix){
     }
     free(piMatrix->matrix);
 }
-
-
 
 d_Matrix* create_d_Matrix(Graph* graph){
     d_Matrix* dMatrix = malloc(sizeof(d_Matrix));
@@ -252,7 +248,6 @@ int floyd_warshall(Graph* graph, d_Matrix* dMatrix, pi_Matrix* piMatrix){
 
     }
 }
-
 int floyd_warshall_shell(Graph* graph){
     w_Matrix* wMatrix = init_w_Matrix(graph);
     d_Matrix* dMatrix = init_d_Matrix(graph, wMatrix);

@@ -14,7 +14,6 @@ Queue_bfs* init_queue_bfs(){
 void push(Queue_bfs* queue, String* v){
     //printf("Пытаемся добавить в очередь: %s\n", v->str);
     if (queue->head == NULL){
-
         qNode* newNode = malloc(sizeof(qNode));
         newNode->vertex = malloc(sizeof(String));
         newNode->vertex->len = v->len;
@@ -27,7 +26,6 @@ void push(Queue_bfs* queue, String* v){
         //printf("добавилась в начало: %s\n", v->str);
         return;
     }
-
     else{
         qNode* newNode = malloc(sizeof(qNode));
         newNode->vertex = malloc(sizeof(String));
@@ -135,7 +133,8 @@ void print_all_arrays(Graph* graph, Queue_bfs* queue, color_cell* color, distanc
 
 int init_bfs(Graph* graph, Queue_bfs* queue, color_cell* color, distance_cell* d, predecessor_cell* pred, String* v1){
     for (int i = 0; i < graph->v; i++) {
-        String *cv = malloc(sizeof(String));
+
+        String* cv = malloc(sizeof(String));
         cv->len = graph->Garr[i].vertex->len;
         cv->str = malloc(sizeof(char) * (cv->len + 1));
         strcpy(cv->str, graph->Garr[i].vertex->str);
@@ -158,10 +157,11 @@ int init_bfs(Graph* graph, Queue_bfs* queue, color_cell* color, distance_cell* d
         pred[i].vertex = pv;
         pred[i].pred_vertex = NULL;
 
-        if (strcmp(v1->str, graph->Garr[i].vertex->str) == 0) {
+        if (strcmp(v1->str, graph->Garr[i].vertex->str) == 0){
             color[i].color = 1;
             d[i].distance = 0;
         }
+
     }
 }
 
@@ -217,7 +217,7 @@ void print_bfs(Graph* graph, predecessor_cell* pred, String* v1, String* v2){
         for (int i = 0; i < graph->v; i++){
             if (strcmp(v2->str, pred[i].vertex->str) == 0){
                 if (pred[i].pred_vertex == NULL){
-                    printf("Пути нет\n");
+                    printf("\nПуть между вершинами \"%s\" и \"%s\" отсутствует\n", v1->str, v2->str);
                     return;
                 }
                 else{

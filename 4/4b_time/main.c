@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 //Обход работает неправильно.
 //Удаление работает неправильно.
 typedef struct dNode{
@@ -64,7 +65,7 @@ void traversal_shell(Node* root);
 Поиск информации по заданному ключу. Если элементов с требуемым значением ключа может быть несколько, то необходимо в качестве результата вернуть их все.
 Возврат необходимо осуществлять при помощи вектора или списка указателей, возврат копий элементов не допускается.*/
 void search(Node* tree, unsigned key, Node** pnode);
-void search_shell(Node* Root);
+
 
 /*5. Специальный поиск элемента
 Поиск элемента с наибольшим значением ключа (если таких элементов несколько — действовать по аналогии с операцией поиска по ключу).*/
@@ -79,9 +80,6 @@ void add_from_file(Node** pTree, Node* EList);
 void printMenu();
 int Menu(Node** pRoot, Node* EList);
 void freeTree(Node* tree);
-
-
-
 
 
 char* getString(){
@@ -152,12 +150,12 @@ void left_rotate(Node** pRoot, Node* x){
         *(pRoot) = y; //y – новый корень дерева
     }
     else{//Переустановить левое или правое поддерево родительского узла x
-       if (p->left->key == x->key){
-           p->left = y;
-       }
-       else{
-           p->right = y;
-       }
+        if (p->left->key == x->key){
+            p->left = y;
+        }
+        else{
+            p->right = y;
+        }
     }
     //3. Формирование связи y – x:
     y->left = x;
@@ -371,18 +369,16 @@ void RB_Delete_Fixup(Node** pRoot, Node* x){
     //p = x->parent;// – родительский узел
     //w = p->right (или p->left) – второй потомок узла p
     while (x->key != (*pRoot)->key && x->color == 0){
-        //надо выяснить в каком поддереве лежит
         Node* p = x->parent;
-
-        if (x->key == p->left->key){//если х в левом поддереве
+        if (x->key == p->left->key){
             Node* w = p->right;
-            if (w->color == 1){//случай 1
+            if (w->color == 1){
                 w->color = 0;
-                p->color = 1;
+                w->color = 1;
                 left_rotate(pRoot, p);
                 w = p->right;
             }
-            if (w->left->color == 0 && w->right->color == 0){//тут ошибка
+            if (w->left->color == 0 && w->right->color == 0){
                 w->color = 1;
                 x = p;
             }
@@ -404,11 +400,11 @@ void RB_Delete_Fixup(Node** pRoot, Node* x){
             Node* w = p->left;
             if (w->color == 1){
                 w->color = 0;
-                p->color = 1;
+                w->color = 1;
                 right_rotate(pRoot, p);
                 w = p->left;
             }
-            if (w->right->color == 0 && w->left->color == 0){//тут ошибка
+            if (w->right->color == 0 && w->left->color == 0){
                 w->color = 1;
                 x = p;
             }
@@ -430,22 +426,28 @@ void RB_Delete_Fixup(Node** pRoot, Node* x){
     x->color = 0;
 }
 void RB_Delete(Node** pRoot, Node* x){
+
     if (x->data->next != NULL){//если у нас несколько элементов с одинаковыми ключами, то мы удаляем последний.
         dNode* temp = x->data;
         x->data = x->data->next;
-        printf("Элемент с ключом \"%u\" и информацией \"%u\" был удалён.\n", x->key, x->data->info);
+        //printf("Элемент с ключом \"%u\" и информацией \"%u\" был удалён.\n", x->key, x->data->info);
         free(temp);
         return;
     }
-    printf("Элемент с ключом \"%u\" и информацией \"%u\" был удалён.\n", x->key, x->data->info);
+    //printf("Элемент с ключом \"%u\" и информацией \"%u\" был удалён.\n", x->key, x->data->info);
     Node* y = NULL;//y - реально удаляемый элемент
     Node* p = NULL;//p = par(y)
-    if ( is_x_EList(x->left) == 1 || is_x_EList(x->right) == 1 ){
+
+    if ( is_x_EList(x->left) == 1 || is_x_EList(x->left) == 1 ){
         y = x;
     }
     else{
         y = tree_successor(x);
     }
+
+    //printf("yyyyyyyyyyyyy: \n");
+    //print_node(y);
+
     if (is_x_EList(y->left) == 0){
         p = y->left;
     }
@@ -453,6 +455,10 @@ void RB_Delete(Node** pRoot, Node* x){
         p = y->right;
     }
     p->parent = y->parent;
+
+    //printf("p: \n");
+    //print_node(p);
+
     if (is_x_EList(y->parent) == 1){
         *pRoot = p;
     }
@@ -472,12 +478,13 @@ void RB_Delete(Node** pRoot, Node* x){
     else {
         free_data(y->data);
     }
+
     if (y->color == 0){
         RB_Delete_Fixup(pRoot, p);
     }
+
     free(y);
 }
-
 void RB_Delete_shell(Node** pRoot){
     printf("Введите ключ\n>");
     unsigned key = get_unsigned();
@@ -493,7 +500,7 @@ void RB_Delete_shell(Node** pRoot){
     }
 }
 
-void search(Node* tree, unsigned key, Node** pnode){
+void search_(Node* tree, unsigned key, Node** pnode){
 
     if (is_x_EList(tree) == 1){
         return;
@@ -507,6 +514,28 @@ void search(Node* tree, unsigned key, Node** pnode){
     search(tree->left, key, pnode);
     search(tree->right, key, pnode);
 }
+
+void search(Node* tree, unsigned key, Node** pnode){
+    while (is_x_EList(tree) == 0){
+        if (tree->key == key){
+            *pnode = tree;
+            return;
+        }
+        else if (key < tree->key){
+            tree = tree->left;
+            if (is_x_EList(tree) == 1){
+                return;
+            }
+        }
+        else if (key > tree->key){
+            tree = tree->right;
+            if (is_x_EList(tree) == 1){
+                return;
+            }
+        }
+    }
+}
+
 void search_shell(Node* Root){
     printf("Введите ключ\n>");
     unsigned key = get_unsigned();
@@ -558,25 +587,28 @@ unsigned my_pow(unsigned a, unsigned b){
     return result;
 }
 
-void traversal(Node* x, unsigned num){
+void traversal(Node* x, unsigned n){
+
     if (is_x_EList(x) == 1){
         return;
     }
-    if (x->key >= 1 * num && x->key <= 9 * num){
+    unsigned num = my_pow(10,n);
+    //printf("10**n = %u\n", num);
+
+    if (x->key % num >= 1 && x->key % num <= 9){
         dNode* data = x->data;
         while (data != NULL){
             printf("key: %u info: %u\n", x->key, data->info);
             data=data->next;
         }
     }
-    traversal(x->left, num);
-    traversal(x->right, num);
+    traversal(x->left, n);
+    traversal(x->right, n);
 }
 void traversal_shell(Node* root){
     printf("Введите число десятичных разрядов\n>");
     unsigned n = get_unsigned();
-    unsigned num = my_pow(10,n);
-    traversal(root, num);
+    traversal(root, n);
 }
 
 void special_search(Node* root){
@@ -697,22 +729,91 @@ void freeTree(Node* tree){
     free(tree);
 }
 
-int main() {
+
+unsigned randU(){
+    unsigned u = (unsigned) rand();
+
+}
+
+void createTree(Node** proot, Node* EList,int size){
+    int i = 0;
+    while ( i < size ){
+        unsigned u = (unsigned) rand();
+        RB_insert(proot, EList, u, u);
+        i++;
+    }
+}
+
+void traverse(Node* root, int* i){
+    if (root == NULL) return;
+    traverse(root->left, i);
+    (*i)++;
+    traverse(root->right, i);
+}
+
+void counter(Node* root, int* pc){
+    if (is_x_EList(root) == 1){
+        return;
+    }
+    (*pc)++;
+    counter(root->left, pc);
+    counter(root->right, pc);
+
+}
+
+void tim(){
     Node* EList = malloc(sizeof(Node));
     EList->left = NULL;
     EList->right = NULL;
     EList->parent = NULL;
-
     EList->color = 0;
     EList->key = 0;
-
     EList->data = NULL;
+    Node* root = EList;
 
-    Node* Root = EList;
-    Node** pRoot = &Root;
-    Menu(pRoot, EList);
+    int size = 100000;
+    int n = 21;
+    int i = 1;
 
-    freeTree(*pRoot);
+    int start;
+    int end;
+    int result;
+
+    FILE* searchFile;
+    searchFile = fopen("/home/andrew/labs/4/4b_time/search.csv", "a");
+
+    while (i < n){
+        printf("Создано дерево размера %d\n", size * i);
+        createTree(&root, EList, size * i);//создаём дерево
+        int j = 0;
+        counter(root, &j);
+        printf("количество элементов: %d", j);
+        //print_Tree(root, 0);printf("\n\n\n\n\n");
+        fprintf(searchFile, "\n%d\n", j);
+        for (int j = 0; j < 10; j++){
+            unsigned u = rand();
+            RB_insert(&root, EList, u, u);
+            Node* node = NULL;
+            start = clock();
+            search(root, u, &node);
+            end = clock();
+            //printf("node: %u\n", node->key);
+            if (node != NULL){
+                RB_Delete(&root, node);
+            }
+            result = end - start;
+            fprintf(searchFile, "%d,", result);
+        }
+        freeTree(root);
+        root = EList;
+        //print_Tree(root, 0);printf("\n\n\n\n\n");
+        i++;
+    }
     free(EList);
+    fclose(searchFile);
+}
+
+int main() {
+tim();
 }
 

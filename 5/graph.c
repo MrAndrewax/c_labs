@@ -75,40 +75,34 @@ void print_Graph(Graph* graph){
 
 int add_vertex(Graph* graph, String* new_vertex){
     if (graph->Garr == NULL) {//если граф пустой
-
         graph->v += 1;
-
+        //оформляем новую вершину
         String* added_vertex = malloc(sizeof(String));
         added_vertex->len = strlen(new_vertex->str);
         added_vertex->str = malloc(sizeof(char) * (added_vertex->len + 1));
         strcpy(added_vertex->str, new_vertex->str);
 
         graph->Garr = malloc(sizeof(cell));
-        graph->Garr->adjacent = NULL;
-        graph->Garr->vertex = added_vertex;
+        graph->Garr[0].adjacent = NULL;
+        graph->Garr[0].vertex = added_vertex;
         printf("Вершина \"%s\" была успешно добавлена\n", new_vertex->str);
         return 0;
     }
 
     else if (graph->Garr != NULL){
-
         int Is_added_vertex_in_graph = search(graph, new_vertex);
-
         if (Is_added_vertex_in_graph == 1){//если такая вершина уже есть в графе.
             printf("Вершина \"%s\" уже есть в графе\n", new_vertex->str);
+            printf("Добавление не было выполнено\n");
             return -1;
         }
-
         else if (Is_added_vertex_in_graph == 0){//если вершины нет в графе, то добавляем)))
-
             graph->v += 1;
-
-
+            //оформляем новую вершину
             String *added_vertex = malloc(sizeof(String));
             added_vertex->len = strlen(new_vertex->str);
             added_vertex->str = malloc(sizeof(char) * (added_vertex->len + 1));
             strcpy(added_vertex->str, new_vertex->str);
-
 
             graph->Garr = realloc(graph->Garr, sizeof(cell)*(graph->v));
             graph->Garr[graph->v-1].adjacent = NULL;
@@ -121,14 +115,12 @@ int add_vertex(Graph* graph, String* new_vertex){
 void add_vertex_shell(Graph* graph){
     printf("Введите имя новой вершины\n>");
     String* new_vertex = getStr();
-
     add_vertex(graph, new_vertex);
-
     free(new_vertex->str);
     free(new_vertex);
 }
 
-void add_edge(Graph *graph, String *v1, String *v2){
+void add_edge(Graph* graph, String* v1, String* v2){
     int Is_v1_in_graph = search(graph, v1);     //проверяем есть ли первая вершина в графе
     int Is_v2_in_graph = search(graph, v2);     //проверяем есть ли вторая вершина в графе
     if (Is_v1_in_graph == 0 && Is_v2_in_graph == 1){
