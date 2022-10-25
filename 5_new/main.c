@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
-//добавляется 1 1
 
 char* getStr(){
     char *str = NULL, c;
@@ -34,6 +33,76 @@ typedef struct Graph{
     adjNode** vertices;
     char** vertex_names;
 } Graph;
+
+typedef struct qNode{
+    int vertex;
+    struct qNode* next;
+} qNode;
+typedef struct Queue{
+    qNode* head;
+    qNode* tail;
+} Queue;
+
+typedef struct eNode{
+    int v1;
+    int v2;
+    struct eNode* next;
+} eNode;
+typedef struct Edges{
+    eNode* head;
+} Edges;
+
+typedef struct Way{
+    int v1;
+    int v2;
+} Way;
+
+Graph* init_graph();
+int get_number_of_vertex(Graph* graph, char* ver_name);
+int is_vertex_in_graph(Graph* graph, int v);
+int is_edge_in_graph(Graph* graph, int v1, int v2);
+void add_vertex(Graph* graph, char* vertex_name);
+void add_vertex_shell(Graph* graph);
+void delete_vertex(Graph* graph, int v);
+void delete_vertex_shell(Graph* graph);
+void delete_edge(Graph* graph, int v1, int v2);
+void delete_edge_shell(Graph* graph);
+int is_edge_in_graph_with_msg(Graph* graph, int v1, int v2);
+int add_edge(Graph* graph, int v1, int v2);
+void add_edge_shell(Graph* graph);
+void print_graph(Graph* graph);
+void free_graph(Graph* graph);
+
+Queue* init_Queue();
+void free_Queue(Queue* queue);
+void push(Queue* queue, int vertex);
+int pop(Queue* queue, int* pres);
+void print_path(Graph* graph, int* pred, int s, int v);
+void bfs(Graph* graph, int s, int f);
+void bfs_shell(Graph* graph);
+
+void add_edge_in_edges(Edges* edges, int v1, int v2);
+int is_edge_in_edges(Edges* edges, int v1, int v2);
+void free_edges(Edges* edges);
+Edges* get_edges(Graph* graph);
+void print_edges(Graph* graph, Edges* edges);
+void bellman_ford(Graph* graph, int s, int f);
+void bellman_ford_shell(Graph* graph);
+int print_matrix(Graph* graph, int** matrix);
+int** copy_matrix(int** matrix, int size);
+void free_matrix(int** matrix, int size);
+int* matrix_to_array(int** matrix, int size);
+void sort_array(int* arr, int size);
+void print_array(int* arr, int size);
+int cmp_ways(Way way1, Way way2);
+int is_way_in_ways(Way* ways, int ways_size, Way way);
+Way get_way_by_value(int** matrix, int size,  int value, int num);
+void print_ways(Graph* graph, Way* ways, int ways_size);
+void shortest_path(Graph* graph, int** pred, int** d, int v1, int v2);
+void print_floyd_warshall_matrix(Graph* graph, int** pred, int** d);
+void floyd_warshall_init(Graph* graph, int** pred, int** d);
+void floyd_warshall(Graph* graph);
+void floyd_warshall_shell(Graph* graph);
 
 
 Graph* init_graph(){
@@ -491,23 +560,6 @@ void fast_add_small(Graph* graph){
 
 
 
-
-
-
-
-
-
-
-
-
-typedef struct qNode{
-    int vertex;
-    struct qNode* next;
-} qNode;
-typedef struct Queue{
-    qNode* head;
-    qNode* tail;
-} Queue;
 Queue* init_Queue(){
     Queue* queue = malloc(sizeof(Queue));
     queue->head = NULL;
@@ -638,20 +690,6 @@ void bfs_shell(Graph* graph){
 
 
 
-
-
-
-
-
-
-typedef struct eNode{
-    int v1;
-    int v2;
-    struct eNode* next;
-} eNode;
-typedef struct Edges{
-    eNode* head;
-} Edges;
 void add_edge_in_edges(Edges* edges, int v1, int v2){
     eNode* new_node = malloc(sizeof(eNode));
     new_node->v1 = v1;
@@ -713,7 +751,7 @@ void bellman_ford(Graph* graph, int s, int f){
     d[s] = 0;
     //обработка
     Edges* edges = get_edges(graph);
-    //print_edges(graph, edges);
+    print_edges(graph, edges);
 
     for (int i = 1; i < graph->vertex_count; i++) {
         eNode* edge = edges->head;
@@ -785,8 +823,6 @@ void bellman_ford_shell(Graph* graph){
     free(v1_name);
     free(v2_name);
 }
-
-
 
 int print_matrix(Graph* graph, int** matrix){
     if (matrix == NULL){
@@ -862,10 +898,7 @@ void print_array(int* arr, int size){
     }
     printf("\n");
 }
-typedef struct Way{
-    int v1;
-    int v2;
-} Way;
+
 int cmp_ways(Way way1, Way way2){
     if (way1.v1 == way2.v1 && way1.v2 == way2.v2){
         return 1;
